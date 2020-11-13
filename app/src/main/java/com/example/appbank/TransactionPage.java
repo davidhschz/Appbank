@@ -42,11 +42,27 @@ public class TransactionPage extends AppCompatActivity {
         transfer = findViewById(R.id.btntransfer);
         cancel = findViewById(R.id.btncancel);
         list = findViewById(R.id.btnlisttransactions);
-        balance.setText(getIntent().getStringExtra("balance"));
+        balance.setText("Saldo: $" + getIntent().getStringExtra("balance"));
 
         Date date = new Date();
         DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(getApplicationContext());
         hour.setText(dateFormat.format(date));
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                targetAccount.setText("");
+                amount.setText("");
+                targetAccount.requestFocus();
+            }
+        });
+
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            }
+        });
 
         list.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,41 +81,45 @@ public class TransactionPage extends AppCompatActivity {
     }
 
     private void verifyTransfer() {
-        String url = "http://192.168.1.9/webServiceBank/transfer.php";
-        StringRequest postRequest = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        if (response.equals("0")) {
-                            Toast.makeText(TransactionPage.this, "Verifique la cuenta destino", Toast.LENGTH_SHORT).show();
-                        } else if (response.equals("1")) {
-                            Toast.makeText(TransactionPage.this, "Rectifique valor a enviar", Toast.LENGTH_SHORT).show();
-                        } else if (response.equals("2")){
-                            Toast.makeText(TransactionPage.this, "Saldo insuficiente", Toast.LENGTH_SHORT).show();
-                        } else {
-                            balance.setText(response);
-                            Toast.makeText(TransactionPage.this, "Transacción realizada correctamente", Toast.LENGTH_SHORT).show();
+        if (!targetAccount.getText().toString().isEmpty() && !amount.getText().toString().isEmpty()){
+            String url = "http://192.168.1.9/webServiceBank/transfer.php";
+            StringRequest postRequest = new StringRequest(Request.Method.POST, url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            if (response.equals("0")) {
+                                Toast.makeText(TransactionPage.this, "Verifique la cuenta destino", Toast.LENGTH_SHORT).show();
+                            } else if (response.equals("1")) {
+                                Toast.makeText(TransactionPage.this, "Rectifique valor a enviar", Toast.LENGTH_SHORT).show();
+                            } else if (response.equals("2")){
+                                Toast.makeText(TransactionPage.this, "Saldo insuficiente", Toast.LENGTH_SHORT).show();
+                            } else {
+                                balance.setText(response);
+                                Toast.makeText(TransactionPage.this, "Transacción realizada correctamente", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(TransactionPage.this, "Error", Toast.LENGTH_SHORT).show();
                         }
                     }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(TransactionPage.this, "Error", Toast.LENGTH_SHORT).show();
-                    }
+            ) {
+                @Override
+                protected Map<String, String> getParams()
+                {
+                    Map<String, String>  params = new HashMap<String, String>();
+                    params.put("amount",amount.getText().toString().trim());
+                    params.put("origin_account_number", getIntent().getStringExtra("accountnumber"));
+                    params.put("target_account_number", targetAccount.getText().toString().trim());
+                    return params;
                 }
-                ) {
-                    @Override
-                    protected Map<String, String> getParams()
-                    {
-                        Map<String, String>  params = new HashMap<String, String>();
-                        params.put("amount",amount.getText().toString().trim());
-                        params.put("origin_account_number", getIntent().getStringExtra("accountnumber"));
-                        params.put("target_account_number", targetAccount.getText().toString().trim());
-                        return params;
-                    }
-                };
-                RequestQueue requestQueue =  Volley.newRequestQueue(this);
-                requestQueue.add(postRequest);
+            };
+            RequestQueue requestQueue =  Volley.newRequestQueue(this);
+            requestQueue.add(postRequest);
+        } else {
+            Toast.makeText(this, "Debe completar todos los campos", Toast.LENGTH_SHORT).show();
+        }
     }
 }

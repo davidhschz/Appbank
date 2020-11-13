@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,25 +24,29 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity implements Response.Listener<JSONObject>, Response.ErrorListener{
-    TextView signup;
     EditText password, user;
     Button login;
     RequestQueue rq;
     JsonRequest jrq;
+    ImageView imageView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        signup = findViewById(R.id.tvsignup);
         password = findViewById(R.id.etpassword);
         user = findViewById(R.id.etuser);
         login = findViewById(R.id.btnlogin);
+        imageView = findViewById(R.id.imageView);
 
         rq = Volley.newRequestQueue(getApplicationContext());
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                validateLogin();
+                if (!user.getText().toString().isEmpty() && !password.getText().toString().isEmpty()){
+                    validateLogin();    
+                } else {
+                    Toast.makeText(MainActivity.this, "Ingrese todos los campos", Toast.LENGTH_SHORT).show();   
+                }
             }
         });
     }

@@ -7,13 +7,16 @@
     tools:context=".MainActivity"
     android:orientation="vertical">
 
-    <TextView
-        android:layout_width="match_parent"
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Usuario"
-        android:layout_marginTop="50dp"
-        android:gravity="center"
-        />
+        android:src="@mipmap/ic_banner"
+        android:layout_gravity="center"
+        android:layout_marginTop="85dp">
+
+    </ImageView>
+
 
     <EditText
         android:id="@+id/etuser"
@@ -21,17 +24,11 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:gravity="center"
-        android:hint="Usuario">
+        android:hint="Usuario"
+        android:layout_marginTop="50dp"
+        >
 
     </EditText>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Contraseña"
-        android:layout_marginTop="50dp"
-        android:gravity="center"
-        />
 
     <EditText
         android:id="@+id/etpassword"
@@ -40,7 +37,8 @@
         android:layout_gravity="center_horizontal"
         android:gravity="center"
         android:inputType="textPassword"
-        android:hint="Contraseña">
+        android:hint="Contraseña"
+        android:layout_marginTop="20dp">
 
     </EditText>
 
@@ -54,18 +52,5 @@
         android:text="Iniciar sesión">
 
     </Button>
-
-    <TextView
-        android:id="@+id/tvsignup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Registrarse aquí"
-        android:layout_marginTop="10dp"
-        android:layout_gravity="center_horizontal"
-        android:textStyle="bold"
-        android:textColor="#3F51B5"
-        >
-
-    </TextView>
 
 </LinearLayout>
